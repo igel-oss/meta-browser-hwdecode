@@ -1,0 +1,26 @@
+From c0043fcc2bfacd10112a6e98b1216d3840566e9a Mon Sep 17 00:00:00 2001
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Date: Mon, 6 Feb 2017 12:05:49 +0900
+Subject: [PATCH] appsrc: Clear EOS on flush
+
+Flushing the pipeline should clear the EOS flag so that buffers may be
+sent once again.
+---
+ gst-libs/gst/app/gstappsink.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gst-libs/gst/app/gstappsink.c b/gst-libs/gst/app/gstappsink.c
+index f6408d6..ca37465 100644
+--- a/gst-libs/gst/app/gstappsink.c
++++ b/gst-libs/gst/app/gstappsink.c
+@@ -595,6 +595,7 @@ gst_app_sink_event (GstBaseSink * sink, GstEvent * event)
+       GST_DEBUG_OBJECT (appsink, "received FLUSH_STOP");
+       gst_app_sink_flush_unlocked (appsink);
+       g_mutex_unlock (&priv->mutex);
++      priv->is_eos = FALSE;
+       break;
+     default:
+       break;
+--
+1.9.1
+

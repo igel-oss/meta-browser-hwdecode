@@ -1,0 +1,42 @@
+From 3f73f68cc53e20335f661e65af044f533cd0c008 Mon Sep 17 00:00:00 2001
+From: Kazunori Kobayashi <kkobayas@igel.co.jp>
+Date: Tue, 21 Jul 2015 15:59:07 +0900
+Subject: [PATCH 1/2] libv4l2: Refactor v4l2_mmap
+
+This is a preliminary change to add a call to mmap() from
+libv4l-plugin, alleviating complicated if statements.
+---
+ lib/libv4l2/libv4l2.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/lib/libv4l2/libv4l2.c b/lib/libv4l2/libv4l2.c
+index 0ba0a88..9e4e076 100644
+--- a/lib/libv4l2/libv4l2.c
++++ b/lib/libv4l2/libv4l2.c
+@@ -1627,14 +1627,15 @@ void *v4l2_mmap(void *start, size_t length, int prot, int flags, int fd,
+	void *result;
+
+	index = v4l2_get_index(fd);
+-	if (index == -1 ||
+-			/* Check if the mmap data matches our answer to QUERY_BUF. If it doesn't,
+-			   let the kernel handle it (to allow for mmap-based non capture use) */
+-			start || length != devices[index].convert_mmap_frame_size ||
+-			((unsigned int)offset & ~0xFFu) != V4L2_MMAP_OFFSET_MAGIC) {
+-		if (index != -1)
+-			V4L2_LOG("Passing mmap(%p, %d, ..., %x, through to the driver\n",
+-					start, (int)length, (int)offset);
++	if (index == -1)
++		return (void *)SYS_MMAP(start, length, prot, flags, fd, offset);
++
++	/* Check if the mmap data matches our answer to QUERY_BUF. If it doesn't,
++	   let the kernel handle it (to allow for mmap-based non capture use) */
++	if (start || length != devices[index].convert_mmap_frame_size ||
++	    ((unsigned int)offset & ~0xFFu) != V4L2_MMAP_OFFSET_MAGIC) {
++		V4L2_LOG("Passing mmap(%p, %d, ..., %x, through to the driver\n",
++				start, (int)length, (int)offset);
+
+		if (offset & ((1 << MMAP2_PAGE_SHIFT) - 1)) {
+			errno = EINVAL;
+--
+1.9.1
+
