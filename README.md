@@ -19,6 +19,16 @@ Add the following packages to your IMAGE_INSTALL_append variable in your local.c
 * libv4l
 * libv4l-dev
 
+Add the following define to your local.conf
+
+```
+PACKAGECONFIG_append_pn-chromium = " proprietary-codecs"
+
+```
+
+`bitbake` as usual.
+
+
 Configuration
 =============
 
