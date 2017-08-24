@@ -10,7 +10,7 @@ SRC_URI = "git://github.com/igel-oss/v4l-gst.git;protocol=https;branch=gen3_dev 
 	   file://libv4l-gst.conf \
           "
 
-SRCREV = "ad69cb8bf157736cdb4ddd1fb18145f25f17beab"
+SRCREV = "8c29b775bab5fe636d704eb2e1b99ce0fab88b03"
 
 S = "${WORKDIR}/git"
 
