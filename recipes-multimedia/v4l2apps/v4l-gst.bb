@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file:///${COMMON_LICENSE_DIR}/LGPL-2.1;md5=1a6d268fd218675ff
 
 SECTION = "libs"
 
-DEPENDS = "glibmm gstreamer1.0 v4l-utils gstreamer1.0-plugins-base"
+DEPENDS = "gstreamer1.0 v4l-utils gstreamer1.0-plugins-base"
 
 SRC_URI = "git://github.com/igel-oss/v4l-gst.git;protocol=https;branch=gen3_dev \
 	   file://libv4l-gst.conf \
