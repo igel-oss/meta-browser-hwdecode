@@ -1,26 +1,28 @@
-From c0043fcc2bfacd10112a6e98b1216d3840566e9a Mon Sep 17 00:00:00 2001
 From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
-Date: Mon, 6 Feb 2017 12:05:49 +0900
+Date: Thu, 28 Sep 2017 18:20:42 +0900
 Subject: [PATCH] appsrc: Clear EOS on flush
 
-Flushing the pipeline should clear the EOS flag so that buffers may be
-sent once again.
+The currently preferred method of flushing a pipeline is to use
+the FLUSH_START/STOP events, but these events are input at the
+source pad of the pipeline source, and therefore are not passed
+to the source plugin callback.  Instead do the processing in the
+event callback on the plugin source pad.
 ---
- gst-libs/gst/app/gstappsink.c | 1 +
+ gst-libs/gst/app/gstappsrc.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/gst-libs/gst/app/gstappsink.c b/gst-libs/gst/app/gstappsink.c
-index f6408d6..ca37465 100644
---- a/gst-libs/gst/app/gstappsink.c
-+++ b/gst-libs/gst/app/gstappsink.c
-@@ -595,6 +595,7 @@ gst_app_sink_event (GstBaseSink * sink, GstEvent * event)
-       GST_DEBUG_OBJECT (appsink, "received FLUSH_STOP");
-       gst_app_sink_flush_unlocked (appsink);
-       g_mutex_unlock (&priv->mutex);
+diff --git a/gst-libs/gst/app/gstappsrc.c b/gst-libs/gst/app/gstappsrc.c
+index fff99e9..1bbe7b1 100644
+--- a/gst-libs/gst/app/gstappsrc.c
++++ b/gst-libs/gst/app/gstappsrc.c
+@@ -779,6 +779,7 @@ gst_app_src_send_event (GstElement * element, GstEvent * event)
+     case GST_EVENT_FLUSH_STOP:
+       g_mutex_lock (&priv->mutex);
+       gst_app_src_flush_queued (appsrc, TRUE);
 +      priv->is_eos = FALSE;
+       g_mutex_unlock (&priv->mutex);
        break;
      default:
-       break;
 --
 1.9.1
 
