@@ -1,0 +1,25 @@
+From a1a783242f9391ec46b4b39250f2a9770669e1fb Mon Sep 17 00:00:00 2001
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Date: Tue, 10 Oct 2017 11:35:52 +0900
+Subject: [PATCH 3/3] third_party/openh264: Remove conflicting build flag
+
+-Wno-format and -Wformat-securtiy (set by yocto) are incompatible
+---
+ third_party/openh264/BUILD.gn | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/third_party/openh264/BUILD.gn b/third_party/openh264/BUILD.gn
+index 7b9d458..5711f5a 100644
+--- a/third_party/openh264/BUILD.gn
++++ b/third_party/openh264/BUILD.gn
+@@ -15,7 +15,6 @@ config("config") {
+   # GCC and clang flags. MSVS (is_win && !is_clang) does not use cflags.
+   if (!is_win || is_clang) {
+     cflags += [
+-      "-Wno-format",
+       "-Wno-header-hygiene",
+       "-Wno-unused-function",
+       "-Wno-unused-value",
+-- 
+1.9.1
+

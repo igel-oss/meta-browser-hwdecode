@@ -1,30 +1,30 @@
-From 49215c927b16975b0c5ab515f637c693252cd18c Mon Sep 17 00:00:00 2001
+From 2f68d64d6e8d1ac605793d36f049c32e1a943e80 Mon Sep 17 00:00:00 2001
 From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
-Date: Thu, 26 Jan 2017 17:46:15 +0900
-Subject: [PATCH 2/2] Add mmap via libv4l to generic_v4l2_device
+Date: Tue, 10 Oct 2017 11:35:25 +0900
+Subject: [PATCH 2/3] Add mmap via libv4l to generic_v4l2_device
 
 ---
- generic_v4l2_device.cc | 10 ++++++++++
- v4l2.sig               |  2 ++
+ media/gpu/generic_v4l2_device.cc | 10 ++++++++++
+ media/gpu/v4l2/v4l2.sig          |  2 ++
  2 files changed, 12 insertions(+)
 
 diff --git a/media/gpu/generic_v4l2_device.cc b/media/gpu/generic_v4l2_device.cc
-index 1553c46..73023af 100644
+index b72e53d..017a172 100644
 --- a/media/gpu/generic_v4l2_device.cc
-+++ b/media/media/gpu/gpu/generic_v4l2_device.cc
-@@ -93,10 +93,20 @@ void* GenericV4L2Device::Mmap(void* addr,
++++ b/media/gpu/generic_v4l2_device.cc
+@@ -98,10 +98,20 @@ void* GenericV4L2Device::Mmap(void* addr,
                                int flags,
                                unsigned int offset) {
    DCHECK(device_fd_.is_valid());
-+#if defined(USE_LIBV4L2)
++#if BUILDFLAG(USE_LIBV4L2)
 +  if (use_libv4l2_)
 +    return v4l2_mmap(addr, len, prot, flags, device_fd_.get(), offset);
 +#endif
    return mmap(addr, len, prot, flags, device_fd_.get(), offset);
  }
-
+ 
  void GenericV4L2Device::Munmap(void* addr, unsigned int len) {
-+#if defined(USE_LIBV4L2)
++#if BUILDFLAG(USE_LIBV4L2)
 +  if (use_libv4l2_) {
 +    v4l2_munmap(addr, len);
 +    return;
@@ -32,17 +32,17 @@ index 1553c46..73023af 100644
 +#endif
    munmap(addr, len);
  }
-
+ 
 diff --git a/media/gpu/v4l2/v4l2.sig b/media/gpu/v4l2/v4l2.sig
 index 4269fb4..71b5b37 100644
 --- a/media/gpu/v4l2/v4l2.sig
-+++ b/media/media/gpu/gpu/v4l2/v4l2.sig
++++ b/media/gpu/v4l2/v4l2.sig
 @@ -8,3 +8,5 @@
  LIBV4L_PUBLIC int v4l2_close(int fd);
  LIBV4L_PUBLIC int v4l2_ioctl(int fd, unsigned long int request, ...);
  LIBV4L_PUBLIC int v4l2_fd_open(int fd, int v4l2_flags);
 +LIBV4L_PUBLIC void *v4l2_mmap(void *start, size_t length, int prot, int flags, int fd, int64_t offset);
 +LIBV4L_PUBLIC int v4l2_munmap(void *_start, size_t length);
---
+-- 
 1.9.1
 
