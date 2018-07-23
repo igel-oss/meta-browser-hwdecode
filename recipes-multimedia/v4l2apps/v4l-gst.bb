@@ -6,11 +6,11 @@ SECTION = "libs"
 
 DEPENDS = "gstreamer1.0 v4l-utils gstreamer1.0-plugins-base"
 
-SRC_URI = "git://github.com/igel-oss/v4l-gst.git;protocol=https;branch=gen3_dev \
+SRC_URI = "git://github.com/igel-oss/v4l-gst.git;protocol=https;branch=master \
 	   file://libv4l-gst.conf \
           "
 
-SRCREV = "8c29b775bab5fe636d704eb2e1b99ce0fab88b03"
+SRCREV = "6b28cc35a229a73791c4deb34021caed20043be0"
 
 S = "${WORKDIR}/git"
 
